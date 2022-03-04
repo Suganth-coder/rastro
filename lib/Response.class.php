@@ -41,4 +41,13 @@ class Response{
 
         return $this->response;
     }
+
+    /**
+     1. check_vpn_ip() checks whether the given ip belong to vpn or not
+     @param ipaddress
+     returns True on vpn ip else False
+     */
+    function check_vpn_ip($ipaddress){
+        $this->_currentip = $ipaddress;
+    }
 }
