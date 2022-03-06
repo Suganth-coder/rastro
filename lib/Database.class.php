@@ -1,9 +1,16 @@
 <?php 
 
+require_once __DIR__."/../vendor/autoload.php";
+
 class DataBase{
 
-    public static $dbconn = null;
-    public static $col = null;
+    private static $dbconn = null;
+    private static $col = null;
+    
+    public static $ipaddress = null;
+    public static $ip_location = null;
+    public static $vpn_ip = null;
+    public static $vpn_location = null;
 
     function __construct(){
         
@@ -17,7 +24,7 @@ class DataBase{
     static function getconn($db=null,$collection=null){ // TODO: need to make custom $db conn
 
         $client = new MongoDB\Client(
-            'mongodb://<rastro>:<rastro2022>@<rastro-mongodb>/admin?tls=true'
+            'mongodb://rastro-mongo:27017/'
         );
         if ($collection == null)
             $col = $client->rastro->iplog;
@@ -35,14 +42,20 @@ class DataBase{
      */
     static function insert(){
         
-        $ins_res = DataBase::$col->insertOne([
-            'ipaddress' => '172.168.23.45',
-            'vpn_ip' => '23.545.65.90',
-            'ip_location' => 'india',
-            'vpn_location' => 'turkey'
-        ]);
+        if (DataBase::$ipaddress != null and DataBase::$ip_location != null and DataBase::$vpn_ip != null and DataBase::$vpn_location != null){
+            
+            $ins_res = DataBase::$col->insertOne([
+                'ipaddress' => DataBase::$ipaddress,
+                'vpn_ip' => DataBase::$vpn_location,
+                'ip_location' => DataBase::$ip_location,
+                'vpn_location' => DataBase::$vpn_location
+            ]);
+            return true;
 
-        echo "Inserted id: ".$ins_res->getInsertedId();
+        }else{
+            return false;
+
+        }
 
     }
 

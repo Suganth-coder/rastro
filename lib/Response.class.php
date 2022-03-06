@@ -1,5 +1,7 @@
 <?php 
 
+require_once "Database.class.php";
+
 class Response{
 
     function __construct(){
@@ -14,18 +16,8 @@ class Response{
         @param none
         return status,response
     */
-    function get_ip(){
-
-        if ($this->IsValidMethod){
-
-            $this->ip = $_SERVER['REMOTE_ADDR'];
-            $this->response["response"] = ["ipaddress"=>$this->ip];
-
-        }else{    
-            $this->response["status"] = 400;
-        }
-
-        return $this->response;
+    static function get_ip(){
+        return $_SERVER['REMOTE_ADDR'];
     }
 
     /**
@@ -51,5 +43,38 @@ class Response{
         $this->_currentip = $ipaddress;
     }
 
+    /**
+         1. get_user_details() returns ipaddess, vpnipaddress, iplocation and vpnlocation
+        @param none
+        returns True | False
+     */
+    function get_user_details(){
+
+        if ($this->IsValidMethod){
+
+            Database::$vpn_ip = $this->get_ip();
+            Database::$vpn_location = "France";
+            Database::$ipaddress = "53.23.24.123";
+            Database::$ip_location = "India";
+
+            Database::getconn();
+            Database::insert();
+
+            $user_details = [
+                "vpn_ip" => Database::$vpn_ip,
+                "original_ip" => Database::$ipaddress,
+                "vpn_locaion" => Database::$vpn_location,
+                "original_location" => Database::$ip_location
+            ];
+            
+            $this->response["response"] = $user_details;
+
+        }else{    
+            $this->response["status"] = 400;
+            $this->response["response"] = "Cannot fetch user details";
+        }
+
+        return $this->response;
+    }
     
 }
