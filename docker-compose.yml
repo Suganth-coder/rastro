@@ -1,0 +1,34 @@
+version: '3.9'
+services:
+
+  # rastro ubuntu 
+  rastro-ubuntu:
+    build: ./DockerFile/ubuntu/
+    container_name: rastro-ubuntu
+    hostname: "rastro-ubuntu"
+    volumes: 
+      - "./src:/var/www/html/rastro"
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - rastrobackend
+
+  # rastro mongodb 
+  rastro-mongodb:
+    image: mongo:latest
+    container_name: rastro-mongodb
+    hostname: "rastro-mongo"
+    restart: "unless-stopped"
+    ports:
+        - "127.0.0.1:27017:27017"
+    volumes:
+        - "rastro-mongodb:/data/db"
+    networks:
+        - rastrobackend
+    
+networks:
+  rastrobackend:
+
+volumes:
+  rastro-mongodb:
